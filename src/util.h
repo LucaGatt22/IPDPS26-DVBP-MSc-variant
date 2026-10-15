@@ -12,6 +12,9 @@
 #include <queue>
 #include <set>
 #include <cassert>
+
+#include <cmath>
+
 using namespace std;
 
 const double EPS = 1e-9;

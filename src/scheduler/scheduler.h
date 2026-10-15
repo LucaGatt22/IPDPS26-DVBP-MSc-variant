@@ -36,7 +36,7 @@ class Scheduler{
 };
 
 /// @brief custom best fit comparator (i.e., the lower score first)
-auto bestFitcmp = [](pair<double, int> left, pair<double,int> right){
+inline auto bestFitcmp = [](pair<double, int> left, pair<double,int> right){
     return (left.first < right.first) || (left.first == right.first && left.second < right.second);
 };
 
