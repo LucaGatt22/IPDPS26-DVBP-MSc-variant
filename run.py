@@ -1,49 +1,24 @@
-# %%
-import pandas as pd
-import numpy as np
+import sys
+from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import run_preprocessing
+
 import subprocess
 import concurrent.futures
-import os 
-import multiprocessing
-
+import os
 
 ### Note: Adjust max_concurrent_processes based on your system capabilities
-MAX_CONCURRENT_PROCESSES = multiprocessing.cpu_count()
-
-vmType = pd.read_csv("data/vmType.csv")
-
-# %%
-mapping = {}
-for index, df in vmType.groupby('machineId'):
-    if index == 17: # empty requests
-        continue
-    if index == 20: # empty requests
-        continue
-    if index == 33: # crash 
-        continue
-    
-    df_list = df.vmTypeId.to_list()
-    yes = True
-    
-    for k,v in mapping.items():
-        if(index == 30):
-            break
-        if(set(v) == set(df_list)):
-            print(index, k)
-            yes = False
-            break
-        
-    if yes:
-        mapping[index] = df_list
-validIds = list(mapping.keys())
-print(validIds)
-print(len(validIds))
+MAX_CONCURRENT_PROCESSES = 2 # multiprocessing.cpu_count()
 
 # %%
 ## Reorder so that larger instances is scheduled first. By using this sequence will reduce generating time
 validIds = [12, 31, 8, 16, 11, 23, 6, 34, 3, 22, 1, 9, 30, 24, 27, 26, 25, 2, 7, 15, 14, 5, 28, 19, 32, 0, 4, 10, 18]
 
-cd build
 # %%
 ## Normal + error (log normal)
 processes = []
@@ -89,16 +64,16 @@ def run_process(machineId, sch, error = 0, seed = 0):
         path += "_s" + str(seed)
     path += "/"
     
-    if not os.path.isdir("../generated"):
-        os.mkdir("../generated")
-    if not os.path.isdir("../" + path):
-        os.mkdir("../" + path)
+    if not os.path.isdir("generated"):
+        os.mkdir("generated")
+    if not os.path.isdir("" + path):
+        os.mkdir("" + path)
     
     fileName = path + dict[sch] + "_pId_" + str(machineId)
     
     print("For Physical Machine Id ", machineId, "Run", dict[sch], seed)
     command = ["./dvbp", "-o", fileName, "-m", str(machineId), "-s", str(sch), "-e", str(error), "-r",  str(seed)]
-    subprocess.run(command)
+    subprocess.run(command, cwd="build")
 
 with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_CONCURRENT_PROCESSES) as executor:
     futures = []
@@ -127,16 +102,16 @@ def run_process_with_parameter(machineId, sch, parameter, error = 0, seed = 0):
         path += "_s" + str(seed)
     path += "/"
     
-    if not os.path.isdir("../generated"):
-        os.mkdir("../generated")
-    if not os.path.isdir("../" + path):
-        os.mkdir("../" + path)
+    if not os.path.isdir("generated"):
+        os.mkdir("generated")
+    if not os.path.isdir("" + path):
+        os.mkdir("" + path)
     
     fileName = path + dict[sch] + "_p" + str(parameter) + "_pId_" + str(machineId)
     
     print("For Physical Machine Id ", machineId, "Run", dict[sch], seed)
     command = ["./dvbp", "-o", fileName, "-m", str(machineId), "-s", str(sch), "-e", str(error), "-r",  str(seed), "-p", str(parameter)]
-    subprocess.run(command)
+    subprocess.run(command, cwd="build")
 
 
 with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_CONCURRENT_PROCESSES) as executor:
@@ -151,5 +126,3 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_CONCURRENT_PROCESSES)
     for future in concurrent.futures.as_completed(futures):
         future.result()
  
-
-

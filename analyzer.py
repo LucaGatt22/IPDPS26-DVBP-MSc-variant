@@ -7,7 +7,7 @@ import concurrent
 import multiprocessing
 from scipy import stats
 ### Note: Adjust max_concurrent_processes based on your system capabilities
-MAX_CONCURRENT_PROCESSES = multiprocessing.cpu_count()
+MAX_CONCURRENT_PROCESSES = 2 # multiprocessing.cpu_count()
 
 # %% [markdown]
 # # Read Required files

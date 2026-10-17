@@ -10,8 +10,8 @@ cd ..
 # Step 2: Download the dataset
 ```
 wget -c "https://github.com/Azure/AzurePublicDataset/releases/download/dataset-packing-2020/azurevmallocation_dataset2020_AzurePackingTraceV1.zip"
-unzip azurevmallocation_dataset2020_AzurePackingTraceV1.zip -d data
 mkdir data
+unzip azurevmallocation_dataset2020_AzurePackingTraceV1.zip -d data
 cd data
 sqlite3 -header -csv packing_trace_zone_a_v1.sqlite "select * from vm;" > vm.csv
 sqlite3 -header -csv packing_trace_zone_a_v1.sqlite "select * from vmType;" > vmType.csv

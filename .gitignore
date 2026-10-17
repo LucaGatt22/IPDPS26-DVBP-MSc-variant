@@ -16,7 +16,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -179,6 +178,10 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
 
+data/
 generated/
+
+build/*
+!build/dvbp
 
 *.DS_Store
